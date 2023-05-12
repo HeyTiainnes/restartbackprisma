@@ -8,10 +8,13 @@ import { Await } from 'react-router-dom';
 import { NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { ResetPasswordDemandDto } from './dto/resetPasswordDemandDto';
+import * as speakeasy from 'speakeasy';
 //import { PrismaClient } from '@prisma/client'
 
 @Injectable()
 export class AuthService {
+
     async signin(signinDto: SigninDto) {
         //Verifier si user déja inscrit
         const { email, password } = signinDto
@@ -54,5 +57,21 @@ export class AuthService {
         await this.mailerService.sendSignupConfirmation(email);
         return { data: 'user succesfully created' }
         throw new Error('Method not implemented.');
+    }
+    async resetPasswordDemand(resetPasswordDemandDto: ResetPasswordDemandDto) {
+        //throw new Error('Method not implemented.');
+        const { email } = resetPasswordDemandDto;
+        const user = await this.prismaService.user.findUnique({ where: { email } });
+        if (!user) throw new NotFoundException(`not fund user`);
+
+        const code = speakeasy.totp({
+            secret: this.configService.get("OTO_CODE"),
+            digits: 5,
+            step: 60 * 15,
+            encoding: "base32"
+        })
+        const url = "http://localhost:3000/auth/reset-password-confirmation"
+        await this.mailerService.sendResetPassword(email, url, code)
+        return { data: "msg reset psw sent" }
     }
 }
