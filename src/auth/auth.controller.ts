@@ -3,7 +3,7 @@ import { SignupDto } from './dto/signupDto';
 import { AuthService } from './auth.service';
 import { SigninDto } from './dto/siginDto';
 import { ResetPasswordDemandDto } from './dto/resetPasswordDemandDto';
-
+import { ResetPasswordConfirmationDto } from './dto/resetPasswordConfirmationDto'
 @Controller('auth')
 export class AuthController {
     //injection de la logique metier depuis le service
@@ -22,5 +22,9 @@ export class AuthController {
     @Post('reset-password')
     resetPasswordDemand(@Body() resetPasswordDemandDto: ResetPasswordDemandDto) {
         return this.authService.resetPasswordDemand(resetPasswordDemandDto)
+    }
+    @Post('reset-password-confirmation')
+    resetPasswordConfirmation(@Body() resetPasswordConfirmationDto: ResetPasswordConfirmationDto) {
+        return this.authService.resetPasswordConfirmation(resetPasswordConfirmationDto)
     }
 }
