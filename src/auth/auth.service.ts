@@ -11,10 +11,12 @@ import { ConfigService } from '@nestjs/config';
 import { ResetPasswordDemandDto } from './dto/resetPasswordDemandDto';
 import * as speakeasy from 'speakeasy';
 import { ResetPasswordConfirmationDto } from './dto/resetPasswordConfirmationDto';
+import { deleteAccountDto } from './dto/deleteAccountDto';
 //import { PrismaClient } from '@prisma/client'
 
 @Injectable()
 export class AuthService {
+    d
 
     async signin(signinDto: SigninDto) {
         //Verifier si user déja inscrit
@@ -90,5 +92,8 @@ export class AuthService {
         const hash = await bcrypt.hash(password, 10)
         await this.prismaService.user.update({ where: { email }, data: { password: hash } })
         return { data: 'password modifié :)' }
+    }
+    async deleteAccount(userId: number, deleteAccountDto: deleteAccountDto) {
+        throw new Error('Method not implemented.');
     }
 }

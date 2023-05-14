@@ -1,9 +1,12 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Req, UseGuards } from '@nestjs/common';
 import { SignupDto } from './dto/signupDto';
 import { AuthService } from './auth.service';
 import { SigninDto } from './dto/siginDto';
 import { ResetPasswordDemandDto } from './dto/resetPasswordDemandDto';
 import { ResetPasswordConfirmationDto } from './dto/resetPasswordConfirmationDto'
+import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
+import { deleteAccountDto } from './dto/deleteAccountDto';
 @Controller('auth')
 export class AuthController {
     //injection de la logique metier depuis le service
@@ -26,5 +29,11 @@ export class AuthController {
     @Post('reset-password-confirmation')
     resetPasswordConfirmation(@Body() resetPasswordConfirmationDto: ResetPasswordConfirmationDto) {
         return this.authService.resetPasswordConfirmation(resetPasswordConfirmationDto)
+    }
+    @UseGuards(AuthGuard('jwt'))
+    @Delete("delete")
+    deleteAccount(@Req() request: Request, @Body() deleteAccountDto: deleteAccountDto) {
+        const userId = request.user["userId"];
+        return this.authService.deleteAccount(userId, deleteAccountDto)
     }
 }
