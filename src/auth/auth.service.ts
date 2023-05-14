@@ -11,7 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { ResetPasswordDemandDto } from './dto/resetPasswordDemandDto';
 import * as speakeasy from 'speakeasy';
 import { ResetPasswordConfirmationDto } from './dto/resetPasswordConfirmationDto';
-import { deleteAccountDto } from './dto/deleteAccountDto';
+import { DeleteAccountDto } from './dto/deleteAccountDto';
 //import { PrismaClient } from '@prisma/client'
 
 @Injectable()
@@ -93,7 +93,12 @@ export class AuthService {
         await this.prismaService.user.update({ where: { email }, data: { password: hash } })
         return { data: 'password modifié :)' }
     }
-    async deleteAccount(userId: number, deleteAccountDto: deleteAccountDto) {
-        throw new Error('Method not implemented.');
+    async deleteAccount(userId: number, deleteAccountDto: DeleteAccountDto) {
+        const { password } = deleteAccountDto
+        const user = await this.prismaService.user.findUnique({ where: { userId } });
+        if (!user) throw new NotFoundException(`not fund passwordr lors de sa recherche pour delete account`);
+        await this.prismaService.user.delete({ where: { userId } })
+        console.log(`l'utilisateur ${user.username} avec le mail ${user.email} deleted`)
+        return { data: `user ${user.username, user.username} deleted` }
     }
 }

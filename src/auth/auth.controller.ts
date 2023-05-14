@@ -6,7 +6,7 @@ import { ResetPasswordDemandDto } from './dto/resetPasswordDemandDto';
 import { ResetPasswordConfirmationDto } from './dto/resetPasswordConfirmationDto'
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
-import { deleteAccountDto } from './dto/deleteAccountDto';
+import { DeleteAccountDto } from './dto/deleteAccountDto';
 @Controller('auth')
 export class AuthController {
     //injection de la logique metier depuis le service
@@ -32,7 +32,7 @@ export class AuthController {
     }
     @UseGuards(AuthGuard('jwt'))
     @Delete("delete")
-    deleteAccount(@Req() request: Request, @Body() deleteAccountDto: deleteAccountDto) {
+    deleteAccount(@Req() request: Request, @Body() deleteAccountDto: DeleteAccountDto) {
         const userId = request.user["userId"];
         return this.authService.deleteAccount(userId, deleteAccountDto)
     }
